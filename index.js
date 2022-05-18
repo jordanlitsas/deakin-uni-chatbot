@@ -3,12 +3,13 @@
 
 'use strict';
 
-// Imports dependencies and set up http server
+require('dotenv').config();
 const
   express = require('express'),
   bodyParser = require('body-parser'),
   app = express().use(bodyParser.json()), // creates express http server
   request = require('request');
+
 
 
 const webhookRoute = require('./routes/messages/webhookRoute');
@@ -80,7 +81,7 @@ const callSendAPI = (sendPsid, response) => {
       // Send the HTTP request to the Messenger Platform
   request({
     "uri": "https://graph.facebook.com/v2.6/me/messages",
-    "qs": { "access_token": "EAAUFAz9V4P4BADkQwPj59xyS16sVkcj0cQq7rwn4hMKWYubvXCcNDrFmnkqzN1sIBctphXYAMIVcVkre3ZCMcRRYKT1jDNfrkQvgx3DQH6TJXDC1miqDtBzHQTudfYcDNyfwEAf5nhtsPE5EpsZCkhHm4kuz5QoAwByZApATi5B4AzdIzFe" },
+    "qs": { "access_token": process.env.ACCESS_TOKEN },
     "method": "POST",
     "json": requestBody
   }, (err, res, body) => {

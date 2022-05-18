@@ -1,6 +1,7 @@
+const unitManager = require('./messageManager/unitManager')
 const sanitiseMessage = (message) => {
     let sanitisedMessage = message.toLowerCase();
-    santisedMessage = santisedMessage.trim();
+    sanitisedMessage = sanitisedMessage.trim();
     return sanitisedMessage;
 }
 
@@ -10,10 +11,9 @@ const isKeyword = (message) => {
         case 'get started':
             responseText = unitManager.initiateConversation(message);
             return responseText;
-            break;
+            
         default: 
             return null;
-            break;
     }    
 }
 
