@@ -14,9 +14,9 @@ const sendMessage = async (requestBody, options) => {
           
         let success = await lastConversationService.updateLastConversation(conversation);
         if (!success || Objects.keys(success).length == 0 || !success.ok){
-          res.status(500).send();
+          console.log('UPDATE CONV AFTER MESSAGE SENT - FAIL')
         } else {
-          res.status(200).send();
+          console.log('UPDATE CONV AFTER MESSAGE SENT - SUCCESS')
         }
    
 }
