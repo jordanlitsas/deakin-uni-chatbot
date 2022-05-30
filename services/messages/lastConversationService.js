@@ -13,9 +13,13 @@ const updateLastConversation =  async (conversation) => {
     };
     request(options, function (error, response) {
         if (error){
+            console.log('\n\n updateLastConversation error', error)
+
             return null;
         };
-        return response.body;
+        console.log('\n\n updateLastConversation response', response)
+
+        return response;
     });
     return null;
 }
@@ -23,15 +27,18 @@ const updateLastConversation =  async (conversation) => {
 const getLastConversation = async (psid) => {
     var options = {
         'method': 'GET',
-        'url': `${baseUri}GetLatestConversation?psId=${psid}&?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==`,
+        'url': `${baseUri}GetLatestConversation?psId=${psid}&code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==`,
         'headers': {
         }
       };
    request(options, (error, response) => {
     if (error){
+        console.log('\n\ngetLastConversation error', error)
         return null;
     }
-    return response,body;
+    console.log('\n\ngetLastConversation response', response)
+
+    return response;
    })
    return null;
 }
