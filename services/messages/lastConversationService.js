@@ -8,7 +8,7 @@ const updateLastConversation =  async (conversation) => {
         'url': 'https://cloud-db.azurewebsites.net/api/AddConversation'+"?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==",
         'headers': {
         },
-        body: `{"psId": "${conversation.psId}","conversation": "${conversation.conversation}","topic": "${conversation.topic}"}`
+        body: `{"psId": "${conversation.psId}","conversation": "${conversation.message}","topic": "${conversation.topic}"}`
       
       };
 

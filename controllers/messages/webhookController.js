@@ -15,6 +15,7 @@ const sendMessage = async (requestBody, options) => {
         let success = await lastConversationService.updateLastConversation(conversation);
         if (!success || Objects.keys(success).length == 0 || !success.ok){
           console.log('UPDATE CONV AFTER MESSAGE SENT - FAIL')
+          console.log(success)
         } else {
           console.log('UPDATE CONV AFTER MESSAGE SENT - SUCCESS')
         }
@@ -31,7 +32,13 @@ const callGraphApi = async (method, requestBody) => {
 }
 
 const receivePrompt =  async (req, res) => {
+  //Facebook requires early 200 code http response
+  res.status(200).send('EVENT_RECEIVED')};
+
     let body = req.body;  
+    console.log('>>> WEBHOOK BODy', body)
+    console.log('>>> WEBHOOK BODy', body.messaging[0])
+
       // Iterates over each entry - there may be multiple if batched
       body.entry.forEach(async function(entry) {
         // Gets the body of the webhook event
@@ -94,10 +101,8 @@ const receivePrompt =  async (req, res) => {
     
     });
        
-      // Returns a '200 OK' response to all requests
-      res.status(200).send('EVENT_RECEIVED');
 
-}
+
 
 const verifyWebhook = (req, res) => {
 
