@@ -3,13 +3,14 @@ const lastConversationService = require('../../services/messages/lastConversatio
 const request = require('request-promise');
 
 
-const sendMessage = async (requestBody, options) => {
+const sendMessage = async (requestBody, conversationObject) => {
     await callGraphApi("POST", requestBody);
         //on successful message, update the LastConversation doc to reference in future messages. Maintains state of convo.
         let conversation= {
           psId: requestBody.recipient.id,
-          topic: options.topic,
-          message: options.message,
+          topic: conversationObject.topic,
+          userMessage: conversationObject.userMessage,
+          botMessage: conversationObject.botMessage
         };
           
         lastConversationService.updateLastConversation(conversation).then(success => {
@@ -48,6 +49,9 @@ const receivePrompt =  async (req, res) => {
             callGraphApi("POST", {"recipient": {"id": String(senderPsid)}, "sender_action": "typing_on"});
 
             let conversationObject = await messageLogicRouter.routeMessage(senderPsid, webhookEvent.message.text);
+            
+            // add new user message to object to be uploaded to last conversation doc
+            conversationObject['userMessage'] = webhookEvent.message.text;
             if (typeof(conversationObject) != 'undefined'){
               switch(conversationObject.options){
                 case "resetUnits":
@@ -56,32 +60,34 @@ const receivePrompt =  async (req, res) => {
                 case "addUnit":
                   //let success = await services.unitService.addUnits(unitCode, senderPsid);
                   //if (!success){ conversationObject.message = null; }
+                case null:
+                  break;
               }
-            }
+            
 
-            console.log(conversationObject)
-            //send multiple responsesS
-            if (Array.isArray(conversationObject.message)){
-              for (let i = 0; i < conversationObject.message.length; i++){
+              //send multiple responses
+              if (Array.isArray(conversationObject.botMessage)){
+                for (let i = 0; i < conversationObject.botMessage.length; i++){
+                  let requestBody = {
+                    "recipient": {
+                      "id": senderPsid
+                    },
+                    "message": {"text": conversationObject.botMessage[i]}
+                  };
+                  sendMessage(requestBody, conversationObject);
+                }
+
+              //send single response  
+              } else if (conversationObject.botMessage != null){
                 let requestBody = {
                   "recipient": {
                     "id": senderPsid
                   },
-                  "message": {"text": conversationObject.message[i]}
+                  "message": {"text": conversationObject.botMessage}
                 };
                 sendMessage(requestBody, conversationObject);
-              }
-
-            //send single response  
-            } else if (conversationObject.message != null){
-              let requestBody = {
-                "recipient": {
-                  "id": senderPsid
-                },
-                "message": {"text": conversationObject.message}
-              };
-              sendMessage(requestBody, conversationObject);
-            } 
+              } 
+          }
             
             // if an options request was unsuccessful, i.e., units were not reset in database
             else {

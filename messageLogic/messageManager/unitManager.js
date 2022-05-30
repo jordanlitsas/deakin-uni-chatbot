@@ -16,6 +16,15 @@ const initiateConversation = () => {
 }
 
 
+const actionDatabase = (senderPsid, newUserMessage, lastUserMessage, lastBotMessage) => {
+    if (isUnit(newUserMessage) || newUserMessage == "finished"){
+        //upload lastUserMessage as a new unit associated with the psid
+    }
+
+    if (newUserMessage == "reset units"){
+        //reset units associated with psid
+    }
+}
 
 const getResponse = (message) => {
     

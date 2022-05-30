@@ -8,7 +8,11 @@ const updateLastConversation =  async (conversation) => {
         'url': 'https://cloud-db.azurewebsites.net/api/AddConversation'+"?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==",
         'headers': {
         },
-        body: `{"psId": "${conversation.psId}","conversation": "${conversation.message}","topic": "${conversation.topic}"}`
+        body:
+        `{"psId": "${conversation.psId}",
+        "userMessage": "${conversation.userMessage}",
+        "botMessage": "${converesation.botMessage}"
+        "topic": "${conversation.topic}"}`
       
       };
 
@@ -34,7 +38,7 @@ const getLastConversation = async (psid) => {
         await request(options, async function(error, res, body){
             if (!error && res.statusCode == 200){
                 body = JSON.parse(body);
-                topic = body.topic;
+                topic = body;
             } 
         });
         return topic;
