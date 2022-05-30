@@ -1,6 +1,6 @@
 const messageLogicRouter = require('../../messageLogic/messageLogicRouter');
 const lastConversationService = require('../../services/messages/lastConversationService');
-const request = require('request');
+const request = require('request-promise');
 
 
 const sendMessage = async (requestBody, options) => {
@@ -12,13 +12,14 @@ const sendMessage = async (requestBody, options) => {
           message: options.message,
         };
           
-        let success = await lastConversationService.updateLastConversation(conversation);
-        if (!success || Objects.keys(success).length == 0 || !success.ok){
-          console.log('UPDATE CONV AFTER MESSAGE SENT - FAIL')
-          console.log(success)
-        } else {
-          console.log('UPDATE CONV AFTER MESSAGE SENT - SUCCESS')
-        }
+        lastConversationService.updateLastConversation(conversation).then(success => {
+          if (!success){
+              console.log('UPDATE CONV AFTER MESSAGE SENT - FAIL')
+            } else {
+              console.log('UPDATE CONV AFTER MESSAGE SENT - SUCCESS')
+            }
+        })
+        
    
 }
 
@@ -32,13 +33,7 @@ const callGraphApi = async (method, requestBody) => {
 }
 
 const receivePrompt =  async (req, res) => {
-  //Facebook requires early 200 code http response
-  res.status(200).send('EVENT_RECEIVED')};
-
-    let body = req.body;  
-    console.log('>>> WEBHOOK BODy', body)
-    console.log('>>> WEBHOOK BODy', body.messaging[0])
-
+  let body = req.body;  
       // Iterates over each entry - there may be multiple if batched
       body.entry.forEach(async function(entry) {
         // Gets the body of the webhook event
@@ -53,7 +48,7 @@ const receivePrompt =  async (req, res) => {
             callGraphApi("POST", {"recipient": {"id": String(senderPsid)}, "sender_action": "typing_on"});
 
             let conversationObject = await messageLogicRouter.routeMessage(senderPsid, webhookEvent.message.text);
-            if (conversationObject.options){
+            if (typeof(conversationObject) != 'undefined'){
               switch(conversationObject.options){
                 case "resetUnits":
                   // let success = await services.unitSerivce.resetUnits(senderPsid);
@@ -72,7 +67,7 @@ const receivePrompt =  async (req, res) => {
                   },
                   "message": {"text": conversationObject.message[i]}
                 };
-                await sendMessage(requestBody, conversationObject);
+                sendMessage(requestBody, conversationObject);
               }
 
             //send single response  
@@ -83,7 +78,7 @@ const receivePrompt =  async (req, res) => {
                 },
                 "message": {"text": conversationObject.message}
               };
-              await sendMessage(requestBody, conversationObject);
+              sendMessage(requestBody, conversationObject);
             } 
             
             // if an options request was unsuccessful, i.e., units were not reset in database
@@ -94,12 +89,14 @@ const receivePrompt =  async (req, res) => {
                 },
                 "message": {"text": "Something went wrong. Can you re-enter your last message?"}
               };
-              await sendMessage(requestBody, conversationObject);
+              sendMessage(requestBody, conversationObject);
             }
             
       }
-    
-    });
+      //Facebook requires early 200 code http response
+  });
+  res.status(200).send('EVENT_RECEIVED');
+}
        
 
 

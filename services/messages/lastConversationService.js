@@ -1,4 +1,4 @@
-const request = require('request');
+const request = require('request-promise');
 const baseUri = "https://cloud-db.azurewebsites.net/api/";
 
 
@@ -12,28 +12,36 @@ const updateLastConversation =  async (conversation) => {
       
       };
 
-    request(options, function (error, response) {
-        if (error){
-            return null;
-        };
-        return response;
+    let success = false;
+    await request(options, async function (error, res, body) {
+       if (!error && res.statusCode == 200){
+           success = true;
+       }
     });
+    return success;
 }
 
 const getLastConversation = async (psid) => {
-    var options = {
-        'method': 'GET',
-        'url': `${baseUri}GetLatestConversation?psId=${psid}&code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==`,
-        'headers': {
-        }
-      };
-   request(options, (error, response) => {
-    if (error){
-        return null;
+
+        var options = {
+            'method': 'GET',
+            'url': `${baseUri}GetLatestConversation?psId=${psid}&code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==`,
+            'headers': {
+            }
+          };
+    
+        let topic = null;
+        await request(options, async function(error, res, body){
+            if (!error && res.statusCode == 200){
+                body = JSON.parse(body);
+                topic = body.topic;
+            } 
+        });
+        return topic;
     }
-    return response.body;
-   })
-}
+
+
+
 
 module.exports = {
     updateLastConversation,

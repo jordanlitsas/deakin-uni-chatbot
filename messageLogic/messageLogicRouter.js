@@ -13,12 +13,14 @@ const routeMessage = async (senderPsid, messageText) => {
 
     
     // if it is an ongoing conversation, query the db for the LastConversation doc
-    let lastConversation = await lastConversationService.getLastConversation(senderPsid);
-    switch(lastConversation.topic){
-        case "addUnit":
+
+    let topic = await lastConversationService.getLastConversation(senderPsid);
+    switch(topic){
+        case "addUnits":
             let response = unitManager.getResponse(messageText);
-            return {topic: "addUnit", message: response};
-    }
+            return {topic: "addUnits", message: response, options:null};
+    }  
+    
 }
 
 

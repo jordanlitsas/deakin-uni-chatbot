@@ -12,9 +12,9 @@ const
 const webhookRoute = require('./routes/messages/webhookRoute');
 app.use('/webhook', webhookRoute);
 
-const tmp = require('./services/messages/lastConversationService');
+const tmp = require('./controllers/messages/webhookController');
 app.post('/test', (req, res) => {
-  tmp.updateLastConversation(req.body);
+  tmp.receivePrompt(req, res);
 })
 
 
