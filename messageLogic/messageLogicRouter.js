@@ -8,10 +8,10 @@ const routeMessage = async (senderPsid, messageText) => {
     // if it's a new conversation keyword, get response and topic locally
     let firstResponse = messageUtil.isKeyword(message);
     if (firstResponse != null){
-      
         return firstResponse;
     }
 
+    
     // if it is an ongoing conversation, query the db for the LastConversation doc
     let lastConversation = await lastConversationService.getLastConversation(senderPsid);
     switch(lastConversation.topic){

@@ -4,29 +4,16 @@ const request = require('request');
 
 
 const sendMessage = async (requestBody, options) => {
-  // request({
-  //   "uri": "https://graph.facebook.com/v2.6/me/messages",
-  //   "qs": { "access_token": process.env.ACCESS_TOKEN },
-  //   "method": "POST",
-  //   "json": requestBody
-  // }, async (err, res, body) => {
-    // if (!err) {
-      // if (res.statusCode == 200){
     await callGraphApi("POST", requestBody);
         //on successful message, update the LastConversation doc to reference in future messages. Maintains state of convo.
         let conversation= {
           PSID: requestBody.recipient.id,
           topic: options.topic,
           message: options.message,
-          messageTime: new Date()
         };
           
         await lastConversationService.updateLastConversation(conversation);
-      // }
-    // } else {
-      // console.error("Unable to send message:" + err);
-    // }
-  // }); 
+   
 }
 
 const callGraphApi = async (method, requestBody) => {
@@ -37,6 +24,7 @@ const callGraphApi = async (method, requestBody) => {
     "json": requestBody
   });
 }
+
 const receivePrompt =  async (req, res) => {
     let body = req.body;  
       // Iterates over each entry - there may be multiple if batched
