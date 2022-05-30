@@ -13,7 +13,7 @@ const sendMessage = async (requestBody, options) => {
         };
           
         let success = await lastConversationService.updateLastConversation(conversation);
-        if (!success && Objects.keys(success).length == 0 && !success.ok){
+        if (!success || Objects.keys(success).length == 0 || !success.ok){
           res.status(500).send();
         } else {
           res.status(200).send();
