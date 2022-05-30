@@ -25,18 +25,18 @@ const isKeyword = (message) => {
                 "Welcome to Ask Alfred. If you get stuck at any time, just send 'help'. Let's start adding your units",
              `${unitManager.initiateConversation()}`
             ];
-            conversationResponse = {topic: "addUnit", message: responseText};
+            conversationResponse = {topic: "addUnits", message: responseText};
             return conversationResponse;
 
         case 'add units':
             responseText = unitManager.initiateConversation();
-            conversationResponse = {topic: "addUnit", message: responseText, options: "addUnit"};
+            conversationResponse = {topic: "addUnits", message: responseText, options: "addUnits"};
             return conversationResponse;
         
         case 'reset units':
             responseText = unitManager.getResponse(message);
             //because after resetting units the conversation flows into adding units, the topic is addUnit
-            conversationResponse = {topic: "addUnit", message: responseText, options: "resetUnits"}; 
+            conversationResponse = {topic: "addUnits", message: responseText, options: "resetUnits"}; 
             return conversationResponse;
 
         case 'notifications':

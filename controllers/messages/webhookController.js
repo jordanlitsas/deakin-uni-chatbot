@@ -58,6 +58,8 @@ const receivePrompt =  async (req, res) => {
                   //if (!success){ conversationObject.message = null; }
               }
             }
+
+            console.log(conversationObject)
             //send multiple responsesS
             if (Array.isArray(conversationObject.message)){
               for (let i = 0; i < conversationObject.message.length; i++){

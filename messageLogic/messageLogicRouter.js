@@ -15,9 +15,11 @@ const routeMessage = async (senderPsid, messageText) => {
     // if it is an ongoing conversation, query the db for the LastConversation doc
 
     let topic = await lastConversationService.getLastConversation(senderPsid);
+    console.log(topic)
     switch(topic){
         case "addUnits":
             let response = unitManager.getResponse(messageText);
+            console.log(response)
             return {topic: "addUnits", message: response, options:null};
     }  
     
