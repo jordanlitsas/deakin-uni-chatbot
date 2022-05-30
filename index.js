@@ -12,6 +12,10 @@ const
 const webhookRoute = require('./routes/messages/webhookRoute');
 app.use('/webhook', webhookRoute);
 
+const tmp = require('./services/messages/lastConversationService');
+app.post('/test', (req, res) => {
+  tmp.updateLastConversation(req.body);
+})
 
 
 // Sets server port and logs message on success

@@ -7,12 +7,17 @@ const sendMessage = async (requestBody, options) => {
     await callGraphApi("POST", requestBody);
         //on successful message, update the LastConversation doc to reference in future messages. Maintains state of convo.
         let conversation= {
-          PSID: requestBody.recipient.id,
+          psId: requestBody.recipient.id,
           topic: options.topic,
           message: options.message,
         };
           
-        await lastConversationService.updateLastConversation(conversation);
+        let success = await lastConversationService.updateLastConversation(conversation);
+        if (!success && Objects.keys(success).length == 0 && !success.ok){
+          res.status(500).send();
+        } else {
+          res.status(200).send();
+        }
    
 }
 
@@ -38,7 +43,7 @@ const receivePrompt =  async (req, res) => {
         if (webhookEvent.message) {
             
             // indicate to user that the messaged was received with the typing indicator bubble ( . . . )
-            callGraphApi("POST", {"recipient": {"id": senderPsid}, "sender_action": "typing_on"});
+            callGraphApi("POST", {"recipient": {"id": String(senderPsid)}, "sender_action": "typing_on"});
 
             let conversationObject = await messageLogicRouter.routeMessage(senderPsid, webhookEvent.message.text);
             if (conversationObject.options){
@@ -54,7 +59,6 @@ const receivePrompt =  async (req, res) => {
             //send multiple responsesS
             if (Array.isArray(conversationObject.message)){
               for (let i = 0; i < conversationObject.message.length; i++){
-                console.log(conversationObject.message[i])
                 let requestBody = {
                   "recipient": {
                     "id": senderPsid
