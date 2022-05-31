@@ -3,6 +3,7 @@ const baseUri = "https://cloud-db.azurewebsites.net/api/";
 
 
 const updateLastConversation =  async (conversation) => {
+console.log(conversation)
     try{
         var options = {
             'method': 'POST',

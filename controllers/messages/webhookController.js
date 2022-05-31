@@ -38,13 +38,11 @@ const receivePrompt =  async (req, res) => {
             // messageService.callGraphApi("POST", {"recipient": {"id": senderPsid}, "sender_action": "typing_on"});
 
             let conversationObject = await messageLogicRouter.routeMessage(senderPsid, webhookEvent.message.text);
-            
             // add new user message to object to be uploaded to last conversation doc
             conversationObject['userMessage'] = webhookEvent.message.text;
 
 
             if (typeof(conversationObject) != 'undefined'){
-              console.log(conversationObject)
 
               if (Array.isArray(conversationObject.options)){                
                 for (let i = 0; i < conversationObject.options.length; i++){
@@ -59,6 +57,10 @@ const receivePrompt =  async (req, res) => {
                       break;
                     case "addUnit":
                       await unitService.addUnit(senderPsid, conversationObject.options[i].value);
+                      break;
+                    case "setNotification":
+                      //set notification
+                      console.log("SUCCESS notification set every " + conversationObject.options[i].value);
                       break;
                     case null:
                       break;

@@ -1,6 +1,7 @@
 const messageUtil = require('./messageUtil');
 const lastConversationService = require('../services/messages/lastConversationService')
 const unitManager = require("./messageManager/unitManager");
+const notificationManager = require('./messageManager/notificationManager')
 
 const routeMessage = async (senderPsid, messageText) => {
     let message = messageUtil.sanitiseMessage(messageText);
@@ -15,10 +16,15 @@ const routeMessage = async (senderPsid, messageText) => {
     // if it is an ongoing conversation, query the db for the LastConversation doc
 
     let doc = await lastConversationService.getLastConversation(senderPsid);
+    let response;
     switch(doc.topic){
         case "addUnits":
-            let response = unitManager.getResponse(messageText, doc.userMessage);        
+            response = unitManager.getResponse(message, doc.userMessage);        
             return {topic: "addUnits", botMessage: response.message, options: response.options};
+
+        case "notifications":   
+            response = notificationManager.getResponse(message, doc.userMessage);
+            return {topic: "notifications", botMessage: response.message, options: response.options};
     }  
     
 }

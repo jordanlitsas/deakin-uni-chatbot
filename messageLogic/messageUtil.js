@@ -42,7 +42,7 @@ const isKeyword = (message) => {
         case 'notifications':
             responseText = notificationManager.initiateConversation();
             conversationResponse = {topic: 'notifications', botMessage: responseText}
-            
+            return conversationResponse;
         default: 
             return null;
     }    
