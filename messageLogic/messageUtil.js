@@ -17,7 +17,7 @@ const isKeyword = (message) => {
                 'Send "add units" to add units or "reset units" to reset units.',
                 'Send "notifications" to tell me how often to remind you of your assessments"'
             ];
-            conversationResponse = {topic: "help", message: responseText};
+            conversationResponse = {topic: "help", botMessage: responseText};
             return conversationResponse;
 
         case 'get started':
@@ -25,23 +25,23 @@ const isKeyword = (message) => {
                 "Welcome to Ask Alfred. If you get stuck at any time, just send 'help'. Let's start adding your units",
              `${unitManager.initiateConversation()}`
             ];
-            conversationResponse = {topic: "addUnits", message: responseText};
+            conversationResponse = {topic: "addUnits", botMessage: responseText};
             return conversationResponse;
 
         case 'add units':
             responseText = unitManager.initiateConversation();
-            conversationResponse = {topic: "addUnits", message: responseText, options: "addUnits"};
+            conversationResponse = {topic: "addUnits", botMessage: responseText};
             return conversationResponse;
         
         case 'reset units':
             responseText = unitManager.getResponse(message);
             //because after resetting units the conversation flows into adding units, the topic is addUnit
-            conversationResponse = {topic: "addUnits", message: responseText, options: "resetUnits"}; 
+            conversationResponse = {topic: "addUnits", botMessage: responseText, options: [{action: "resetUnits", value:null}]}; 
             return conversationResponse;
 
         case 'notifications':
             responseText = notificationManager.initiateConversation();
-            conversationResponse = {topic: 'notifications', message: responseText}
+            conversationResponse = {topic: 'notifications', botMessage: responseText}
             
         default: 
             return null;

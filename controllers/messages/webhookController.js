@@ -37,9 +37,10 @@ const receivePrompt =  async (req, res) => {
         // Check if the event is a message or postback and
         // pass the event to the appropriate handler function
         if (webhookEvent.message) {
-            
-            // indicate to user that the messaged was received with the typing indicator bubble ( . . . )
-            messageService.callGraphApi("POST", {"recipient": {"id": String(senderPsid)}, "sender_action": "typing_on"});
+          console.log(`${webhookEvent.message.text} by ${senderPsid}`);
+        
+  //           // indicate to user that the messaged was received with the typing indicator bubble ( . . . )
+            // messageService.callGraphApi("POST", {"recipient": {"id": senderPsid}, "sender_action": "typing_on"});
 
             let conversationObject = await messageLogicRouter.routeMessage(senderPsid, webhookEvent.message.text);
             
@@ -47,10 +48,12 @@ const receivePrompt =  async (req, res) => {
             conversationObject['userMessage'] = webhookEvent.message.text;
 
 
-
             if (typeof(conversationObject) != 'undefined'){
+              console.log(`cont.52 ${conversationObject}`);
+              console.log(conversationObject);
 
-              if (conversationObject.options.length > 0){
+              
+              if (Array.isArray(conversationObject.options)){                
                 for (let i = 0; i < conversationObject.options.length; i++){
                   switch(conversationObject.options[i].action){
                     case "unitOverview":
@@ -68,7 +71,6 @@ const receivePrompt =  async (req, res) => {
                       break;
                   }
                 }
-
               }
              
             
@@ -76,6 +78,8 @@ const receivePrompt =  async (req, res) => {
               //send multiple responses
               if (Array.isArray(conversationObject.botMessage)){
                 for (let i = 0; i < conversationObject.botMessage.length; i++){
+                   console.log(`controller.77`);                
+                console.log(`${conversationObject.botMessage[i]}`);
                   let requestBody = {
                     "recipient": {
                       "id": senderPsid
@@ -97,6 +101,8 @@ const receivePrompt =  async (req, res) => {
               //send single response  
      
               else if (conversationObject.botMessage != null){
+                console.log(`controller.98`);                
+                console.log(`${conversationObject}`);
                 let requestBody = {
                   "recipient": {
                     "id": senderPsid
@@ -125,7 +131,7 @@ const receivePrompt =  async (req, res) => {
             }
             
       }
-      //Facebook requires early 200 code http response
+  //     //Facebook requires early 200 code http response
   });
   res.status(200).send('EVENT_RECEIVED');
 }

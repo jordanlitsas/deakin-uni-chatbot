@@ -6,6 +6,8 @@ const callGraphApi = async (requestBody) => {
       "method": 'POST',
       "json": requestBody
     });
+
+    console.log(`Message sent: ${requestBody.message.text}`)
   }
 
 

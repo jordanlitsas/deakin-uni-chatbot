@@ -40,7 +40,9 @@ const getResponse = (newUserMessage, lastUserMessage) => {
             action = "addUnit";
             value = lastUserMessage;
         }
-        return {message:`You have sent me ${newUserMessage}.` + replies.confirmAddedUnit, option: [{action: action, value: value}]};
+        return {
+            message:`You have sent me ${newUserMessage}.` + replies.confirmAddedUnit, 
+            option: [{action: action, value: value}]};
     }
 
     if (newUserMessage == "no"){
@@ -52,11 +54,15 @@ const getResponse = (newUserMessage, lastUserMessage) => {
             action = "addUnit";
             value = lastUserMessage;
         }
-        return {message: replies.finishAddingUnits, option: [{action: action, value: value}, {action: "unitOverview", value: null}]};
+        return {
+            message: replies.finishAddingUnits, 
+            option: [
+                {action: action, value: value}, 
+                {action: "unitOverview", value: null}
+            ]};
     }
 
     if (newUserMessage == "reset units"){
-        userService.resetUnits(psid);
         return [replies.resetUnits, replies.addUnit];
     }
 
