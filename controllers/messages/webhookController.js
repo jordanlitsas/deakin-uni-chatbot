@@ -2,6 +2,7 @@ const messageLogicRouter = require('../../messageLogic/messageLogicRouter');
 const lastConversationService = require('../../services/messages/lastConversationService');
 const messageService = require('../../services/messages/messageService');
 const unitService = require('../../services/topic/unitService');
+const unitManager = require('../../messageLogic/messageManager/unitManager');
 const request = require('request-promise');
 
 
@@ -15,13 +16,7 @@ const sendMessage = async (requestBody, conversationObject) => {
           botMessage: conversationObject.botMessage
         };
           
-        lastConversationService.updateLastConversation(conversation).then(success => {
-          if (!success){
-              console.log('UPDATE CONV AFTER MESSAGE SENT - FAIL')
-            } else {
-              console.log('UPDATE CONV AFTER MESSAGE SENT - SUCCESS')
-            }
-        })
+        lastConversationService.updateLastConversation(conversation);
 }
 
 
@@ -49,20 +44,18 @@ const receivePrompt =  async (req, res) => {
 
 
             if (typeof(conversationObject) != 'undefined'){
-              console.log(`cont.52 ${conversationObject}`);
-              console.log(conversationObject);
+              console.log(conversationObject)
 
-              
               if (Array.isArray(conversationObject.options)){                
                 for (let i = 0; i < conversationObject.options.length; i++){
                   switch(conversationObject.options[i].action){
                     case "unitOverview":
-                      // let success = await services.unitSerivce.resetUnits(senderPsid);
-                      // if (!success){  conversationObject.message = null; }
-                      await unitService.addUnit(senderPsid, conversationObject.options[i].value);
-                      // let unitDocs = await unitService.getUnitsWithPsid(senderPsid);
-                      //get message with unit docs
-                      //add message to conversationObject.botMessage array
+                      let unitDocs = await unitService.getUnits(senderPsid);
+                      let overviewResponses = unitManager.getOverviewResponses(unitDocs);
+                      conversationObject.botMessage = [conversationObject.botMessage];
+                      for (let j = 0; j < overviewResponses.length; j++){
+                        conversationObject.botMessage.push(overviewResponses[j]);
+                      }
                       break;
                     case "addUnit":
                       await unitService.addUnit(senderPsid, conversationObject.options[i].value);
@@ -78,8 +71,6 @@ const receivePrompt =  async (req, res) => {
               //send multiple responses
               if (Array.isArray(conversationObject.botMessage)){
                 for (let i = 0; i < conversationObject.botMessage.length; i++){
-                   console.log(`controller.77`);                
-                console.log(`${conversationObject.botMessage[i]}`);
                   let requestBody = {
                     "recipient": {
                       "id": senderPsid
@@ -101,8 +92,7 @@ const receivePrompt =  async (req, res) => {
               //send single response  
      
               else if (conversationObject.botMessage != null){
-                console.log(`controller.98`);                
-                console.log(`${conversationObject}`);
+     
                 let requestBody = {
                   "recipient": {
                     "id": senderPsid

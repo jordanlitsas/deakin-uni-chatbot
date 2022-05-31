@@ -45,8 +45,6 @@ const getLastConversation = async (psid) => {
         let topic = null;
         await request(options, async function(error, res, body){
             if (!error && res.statusCode == 200){
-                console.log(`body`);
-                console.log(body)
                 body = JSON.parse(body);
                 topic = body;
             } 

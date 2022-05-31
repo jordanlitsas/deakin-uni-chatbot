@@ -1,4 +1,4 @@
-const userService = require('../../services/topic/unitService');
+const unitService = require('../../services/topic/unitService');
 
 const replies = {
     initiateConversation:  "Please send me your first unit. Use the three letter and three number format. Don't worry about capitals.",
@@ -35,6 +35,7 @@ const getResponse = (newUserMessage, lastUserMessage) => {
     let action = null;
     let value = null;
 
+
     if (isUnit(newUserMessage)){
         if (isUnit(lastUserMessage)){
             action = "addUnit";
@@ -42,7 +43,7 @@ const getResponse = (newUserMessage, lastUserMessage) => {
         }
         return {
             message:`You have sent me ${newUserMessage}.` + replies.confirmAddedUnit, 
-            option: [{action: action, value: value}]};
+            options: [{action: action, value: value}]};
     }
 
     if (newUserMessage == "no"){
@@ -56,7 +57,7 @@ const getResponse = (newUserMessage, lastUserMessage) => {
         }
         return {
             message: replies.finishAddingUnits, 
-            option: [
+            options: [
                 {action: action, value: value}, 
                 {action: "unitOverview", value: null}
             ]};
@@ -70,6 +71,22 @@ const getResponse = (newUserMessage, lastUserMessage) => {
     return replies.userError;
 }
 
+const getOverviewResponses = (unitDocs) => {
+    unitDocs = JSON.parse(unitDocs)
+    let responses = [];
+    for (let i = 0; i < unitDocs.length; i++){
+        let assessmentOverview = unitDocs[i].unit_name + "\n";
+        for (let j = 0; j < unitDocs[i].assessments.length; j++){
+            if (unitDocs[i].assessments[j].end_date == ""){
+                assessmentOverview += `${unitDocs[i].assessments[j].name} - ${unitDocs[i].assessments[j].value*100}%\n`;
+            } else {
+                assessmentOverview += `${unitDocs[i].assessments[j].name} - ${unitDocs[i].assessments[j].value*100}% - due ${unitDocs[i].assessments[j].end_date}\n`;
+            }
+        }
+        responses.push(assessmentOverview);
+    }
+    return responses;
+}
 
 
 const isUnit = (message) => {
@@ -80,4 +97,4 @@ const isUnit = (message) => {
     return false;
 }
 
-module.exports = { initiateConversation, getResponse };
+module.exports = { initiateConversation, getResponse, getOverviewResponses };
