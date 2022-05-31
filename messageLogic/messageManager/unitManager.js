@@ -75,9 +75,13 @@ const getOverviewResponses = (unitDocs) => {
     unitDocs = JSON.parse(unitDocs)
     let responses = [];
     for (let i = 0; i < unitDocs.length; i++){
-        let assessmentOverview = unitDocs[i].unit_name + " - ";
+        let assessmentOverview = unitDocs[i].unit_name + "\n";
         for (let j = 0; j < unitDocs[i].assessments.length; j++){
-            assessmentOverview += `${unitDocs[i].assessments[j].name} | ${unitDocs[i].assessments[j].value*100}% | due ${unitDocs[i].assessments[j].end_date} `;
+            if (unitDocs[i].assessments[j].end_date == ""){
+                assessmentOverview += `${unitDocs[i].assessments[j].name} - ${unitDocs[i].assessments[j].value*100}%\n`;
+            } else {
+                assessmentOverview += `${unitDocs[i].assessments[j].name} - ${unitDocs[i].assessments[j].value*100}% - due ${unitDocs[i].assessments[j].end_date}\n`;
+            }
         }
         responses.push(assessmentOverview);
     }

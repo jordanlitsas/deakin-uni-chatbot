@@ -1,5 +1,6 @@
 const request = require('request-promise');
 const addUnit = async (psid, unitCode) => {
+    unitCode = unitCode.toUpperCase();
     try{
         var options = {
             'method': 'POST',
