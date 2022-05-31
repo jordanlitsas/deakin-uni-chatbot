@@ -1,10 +1,12 @@
 const messageLogicRouter = require('../../messageLogic/messageLogicRouter');
 const lastConversationService = require('../../services/messages/lastConversationService');
+const messageService = require('../../services/messages/messageService');
+const unitService = require('../../services/topic/unitService');
 const request = require('request-promise');
 
 
 const sendMessage = async (requestBody, conversationObject) => {
-    await callGraphApi("POST", requestBody);
+  messageService.callGraphApi("POST", requestBody);
         //on successful message, update the LastConversation doc to reference in future messages. Maintains state of convo.
         let conversation= {
           psId: requestBody.recipient.id,
@@ -20,18 +22,9 @@ const sendMessage = async (requestBody, conversationObject) => {
               console.log('UPDATE CONV AFTER MESSAGE SENT - SUCCESS')
             }
         })
-        
-   
 }
 
-const callGraphApi = async (method, requestBody) => {
-  await request({
-    "uri": "https://graph.facebook.com/v2.6/me/messages",
-    "qs": { "access_token": process.env.ACCESS_TOKEN },
-    "method": method,
-    "json": requestBody
-  });
-}
+
 
 const receivePrompt =  async (req, res) => {
   let body = req.body;  
@@ -46,23 +39,38 @@ const receivePrompt =  async (req, res) => {
         if (webhookEvent.message) {
             
             // indicate to user that the messaged was received with the typing indicator bubble ( . . . )
-            callGraphApi("POST", {"recipient": {"id": String(senderPsid)}, "sender_action": "typing_on"});
+            messageService.callGraphApi("POST", {"recipient": {"id": String(senderPsid)}, "sender_action": "typing_on"});
 
             let conversationObject = await messageLogicRouter.routeMessage(senderPsid, webhookEvent.message.text);
             
             // add new user message to object to be uploaded to last conversation doc
             conversationObject['userMessage'] = webhookEvent.message.text;
+
+
+
             if (typeof(conversationObject) != 'undefined'){
-              switch(conversationObject.options){
-                case "resetUnits":
-                  // let success = await services.unitSerivce.resetUnits(senderPsid);
-                  // if (!success){  conversationObject.message = null; }
-                case "addUnit":
-                  //let success = await services.unitService.addUnits(unitCode, senderPsid);
-                  //if (!success){ conversationObject.message = null; }
-                case null:
-                  break;
+
+              if (conversationObject.options.length > 0){
+                for (let i = 0; i < conversationObject.options.length; i++){
+                  switch(conversationObject.options[i].action){
+                    case "unitOverview":
+                      // let success = await services.unitSerivce.resetUnits(senderPsid);
+                      // if (!success){  conversationObject.message = null; }
+                      await unitService.addUnit(senderPsid, conversationObject.options[i].value);
+                      // let unitDocs = await unitService.getUnitsWithPsid(senderPsid);
+                      //get message with unit docs
+                      //add message to conversationObject.botMessage array
+                      break;
+                    case "addUnit":
+                      await unitService.addUnit(senderPsid, conversationObject.options[i].value);
+                      break;
+                    case null:
+                      break;
+                  }
+                }
+
               }
+             
             
 
               //send multiple responses
@@ -74,18 +82,34 @@ const receivePrompt =  async (req, res) => {
                     },
                     "message": {"text": conversationObject.botMessage[i]}
                   };
-                  sendMessage(requestBody, conversationObject);
+                  await messageService.callGraphApi(requestBody);
                 }
+                lastConversationService.updateLastConversation({
+                    psId: senderPsid,
+                    topic: conversationObject.topic,
+                    userMessage: conversationObject.userMessage,
+                    botMessage: conversationObject.botMessage 
+                  });
+              }
+
+
 
               //send single response  
-              } else if (conversationObject.botMessage != null){
+     
+              else if (conversationObject.botMessage != null){
                 let requestBody = {
                   "recipient": {
                     "id": senderPsid
                   },
                   "message": {"text": conversationObject.botMessage}
                 };
-                sendMessage(requestBody, conversationObject);
+                await messageService.callGraphApi(requestBody);
+                lastConversationService.updateLastConversation({
+                  psId: senderPsid,
+                  topic: conversationObject.topic,
+                  userMessage: conversationObject.userMessage,
+                  botMessage: conversationObject.botMessage
+                });
               } 
           }
             
@@ -97,7 +121,7 @@ const receivePrompt =  async (req, res) => {
                 },
                 "message": {"text": "Something went wrong. Can you re-enter your last message?"}
               };
-              sendMessage(requestBody, conversationObject);
+              await messageService.callGraphApi(requestBody);
             }
             
       }
