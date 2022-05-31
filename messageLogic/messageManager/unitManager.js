@@ -35,6 +35,7 @@ const getResponse = (newUserMessage, lastUserMessage) => {
     let action = null;
     let value = null;
 
+
     if (isUnit(newUserMessage)){
         if (isUnit(lastUserMessage)){
             action = "addUnit";
@@ -42,7 +43,7 @@ const getResponse = (newUserMessage, lastUserMessage) => {
         }
         return {
             message:`You have sent me ${newUserMessage}.` + replies.confirmAddedUnit, 
-            option: [{action: action, value: value}]};
+            options: [{action: action, value: value}]};
     }
 
     if (newUserMessage == "no"){
@@ -56,7 +57,7 @@ const getResponse = (newUserMessage, lastUserMessage) => {
         }
         return {
             message: replies.finishAddingUnits, 
-            option: [
+            options: [
                 {action: action, value: value}, 
                 {action: "unitOverview", value: null}
             ]};
