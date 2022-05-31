@@ -28,7 +28,33 @@ const addUnit = async (psid, unitCode) => {
     }
 }
 
+const getUnits = async (psid) => {
+    try{
+        var options = {
+            'method': 'POST',
+            'url': `https://cloud-db.azurewebsites.net/api/GetUnitsForUser?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==&psId=${psid}`,
+            'headers': {
+            }};
+      
+    
+        let unitDocs = null;
+        await request(options, async function (error, res, body) {
+           if (!error && res.statusCode == 200){
+                unitDocs = body;
+
+           }
+        });
+        console.log('SUCCESS getting unit')
+        return unitDocs;
+    }
+    catch(error){
+        console.log('ERROR getting unit ')
+        console.log(error)
+        return null;
+    }
+}
 
 module.exports = {
-    addUnit
+    addUnit,
+    getUnits
 }

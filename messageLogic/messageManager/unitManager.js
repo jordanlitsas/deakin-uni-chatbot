@@ -1,4 +1,4 @@
-const userService = require('../../services/topic/unitService');
+const unitService = require('../../services/topic/unitService');
 
 const replies = {
     initiateConversation:  "Please send me your first unit. Use the three letter and three number format. Don't worry about capitals.",
@@ -71,6 +71,18 @@ const getResponse = (newUserMessage, lastUserMessage) => {
     return replies.userError;
 }
 
+const getOverviewResponses = (unitDocs) => {
+    unitDocs = JSON.parse(unitDocs)
+    let responses = [];
+    for (let i = 0; i < unitDocs.length; i++){
+        let assessmentOverview = unitDocs[i].unit_name + " - ";
+        for (let j = 0; j < unitDocs[i].assessments.length; j++){
+            assessmentOverview += `${unitDocs[i].assessments[j].name} | ${unitDocs[i].assessments[j].value*100}% | due ${unitDocs[i].assessments[j].end_date} `;
+        }
+        responses.push(assessmentOverview);
+    }
+    return responses;
+}
 
 
 const isUnit = (message) => {
@@ -81,4 +93,4 @@ const isUnit = (message) => {
     return false;
 }
 
-module.exports = { initiateConversation, getResponse };
+module.exports = { initiateConversation, getResponse, getOverviewResponses };

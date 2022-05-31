@@ -2,6 +2,7 @@ const messageLogicRouter = require('../../messageLogic/messageLogicRouter');
 const lastConversationService = require('../../services/messages/lastConversationService');
 const messageService = require('../../services/messages/messageService');
 const unitService = require('../../services/topic/unitService');
+const unitManager = require('../../messageLogic/messageManager/unitManager');
 const request = require('request-promise');
 
 
@@ -49,12 +50,12 @@ const receivePrompt =  async (req, res) => {
                 for (let i = 0; i < conversationObject.options.length; i++){
                   switch(conversationObject.options[i].action){
                     case "unitOverview":
-                      // let success = await services.unitSerivce.resetUnits(senderPsid);
-                      // if (!success){  conversationObject.message = null; }
-                      await unitService.addUnit(senderPsid, conversationObject.options[i].value);
-                      // let unitDocs = await unitService.getUnitsWithPsid(senderPsid);
-                      //get message with unit docs
-                      //add message to conversationObject.botMessage array
+                      let unitDocs = await unitService.getUnits(senderPsid);
+                      let overviewResponses = unitManager.getOverviewResponses(unitDocs);
+                      conversationObject.botMessage = [conversationObject.botMessage];
+                      for (let j = 0; j < overviewResponses.length; j++){
+                        conversationObject.botMessage.push(overviewResponses[j]);
+                      }
                       break;
                     case "addUnit":
                       await unitService.addUnit(senderPsid, conversationObject.options[i].value);

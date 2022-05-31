@@ -14,6 +14,10 @@ app.post('/test', (req, res) => {
   tmp.receivePrompt(req, res);
 })
 
+const ov = require('./messageLogic/messageManager/unitManager');
+app.post('/ov', (req, res) => {
+  ov.getOverviewResponses();
+})
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
