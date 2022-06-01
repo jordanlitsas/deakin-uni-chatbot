@@ -81,12 +81,13 @@ const receivePrompt =  async (req, res) => {
                   };
                   await messageService.callGraphApi(requestBody);
                 }
-                lastConversationService.updateLastConversation({
-                    psId: senderPsid,
-                    topic: conversationObject.topic,
-                    userMessage: conversationObject.userMessage,
-                    botMessage: conversationObject.botMessage 
-                  });
+                let conversation = {
+                  psId: senderPsid,
+                  topic: conversationObject.topic,
+                  userMessage: conversationObject.userMessage,
+                  botMessage: conversationObject.botMessage
+                };
+                lastConversationService.updateLastConversation(conversation);
               }
 
 
@@ -102,12 +103,13 @@ const receivePrompt =  async (req, res) => {
                   "message": {"text": conversationObject.botMessage}
                 };
                 await messageService.callGraphApi(requestBody);
-                lastConversationService.updateLastConversation({
+                let conversation = {
                   psId: senderPsid,
                   topic: conversationObject.topic,
                   userMessage: conversationObject.userMessage,
                   botMessage: conversationObject.botMessage
-                });
+                };
+                lastConversationService.updateLastConversation(conversation);
               } 
           }
             

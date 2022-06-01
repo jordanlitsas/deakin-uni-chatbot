@@ -1,5 +1,5 @@
 const replies = {
-    initiateConversation:  `When would you like me to provide you with a notification about your upcoming assessments? Every "week", "fortnight" or "month"`
+    initiateConversation:  `When would you like me to provide you with a notification about your upcoming assessments? Every 'week', 'fortnight' or 'month'`
 }
 const initiateConversation = () => {
     return replies.initiateConversation;
@@ -21,8 +21,13 @@ const isInterval = (string) => {
 }
 
 
+const buildAssessmentNotificationMessage = (assessment) => {
+    let response = `${assessment.name} - ${assessment.weight} \r\n${assessment.output}\r\nDue: ${assessment.due}`;
+    return response;
+}
 
 module.exports = {
     initiateConversation,
-    getResponse
+    getResponse,
+    buildAssessmentNotificationMessage
 }

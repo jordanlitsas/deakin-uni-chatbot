@@ -3,20 +3,21 @@ const baseUri = "https://cloud-db.azurewebsites.net/api/";
 
 
 const updateLastConversation =  async (conversation) => {
-console.log(conversation)
     try{
         var options = {
             'method': 'POST',
-            'url': 'https://cloud-db.azurewebsites.net/api/AddConversation'+"?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==",
+            'url': 'https://cloud-db.azurewebsites.net/api/AddConversation?code=f9s6gy32sXPAgP1J4pwTy_rSU_88YcfL6RsP3vs6PTdOAzFuLFJRqQ==',
             'headers': {
             },
-            body:`{
-                \r\n    "psId": "${conversation.psId}",
-                \r\n    "userMessage": "${conversation.userMessage}",
-                \r\n    "botMessage": "${conversation.botMessage}",
-                \r\n    "topic": "${conversation.topic}"\r\n}`
-          };
-      
+            body: `{
+                "psId": "${conversation.psId}",
+                "userMessage":"${conversation.userMessage}",
+                "botMessage":"${conversation.botMessage}", 
+                "topic":"${conversation.topic}"
+            }`
+        };
+        console.log(options.body)
+
     
         let success = false;
         await request(options, async function (error, res, body) {
@@ -29,6 +30,7 @@ console.log(conversation)
     }
     catch(error){
         console.log('ERROR updating last conversation')
+        // console.log(error)
         return null;
     }
     

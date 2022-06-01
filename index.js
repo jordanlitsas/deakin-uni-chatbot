@@ -14,9 +14,10 @@ app.post('/test', (req, res) => {
   tmp.receivePrompt(req, res);
 })
 
-const ov = require('./messageLogic/messageManager/unitManager');
-app.post('/ov', (req, res) => {
-  ov.getOverviewResponses();
+const not = require('./services/topic/notificationService')
+app.post('/open', async (req, res) => {
+  let r = await not.notifyUser(req.body.psId, req.body.interval);
+  res.status(200).send(r);
 })
 
 // Sets server port and logs message on success
