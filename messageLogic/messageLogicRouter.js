@@ -19,11 +19,11 @@ const routeMessage = async (senderPsid, messageText) => {
     let response;
     switch(doc.topic){
         case "addUnits":
-            response = unitManager.getResponse(message, doc.userMessage);        
+            response = unitManager.getResponse(message, doc.conversation);        
             return {topic: "addUnits", botMessage: response.message, options: response.options};
 
         case "notifications":   
-            response = notificationManager.getResponse(message, doc.userMessage);
+            response = notificationManager.getResponse(message, doc.conversation);
             return {topic: "notifications", botMessage: response.message, options: response.options};
     }  
     

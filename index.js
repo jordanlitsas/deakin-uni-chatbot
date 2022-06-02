@@ -16,7 +16,7 @@ app.post('/test', (req, res) => {
 
 const not = require('./services/topic/notificationService')
 app.post('/open', async (req, res) => {
-  let r = await not.notifyUser(req.body.psId, req.body.interval);
+  let r = await not.getNotifications(req.body.psId);
   res.status(200).send(r);
 })
 

@@ -4,7 +4,7 @@ const messageService = require('../../services/messages/messageService');
 const unitService = require('../../services/topic/unitService');
 const unitManager = require('../../messageLogic/messageManager/unitManager');
 const request = require('request-promise');
-
+const notificationService = require('../../services/topic/notificationService');
 
 const sendMessage = async (requestBody, conversationObject) => {
   messageService.callGraphApi("POST", requestBody);
@@ -35,7 +35,7 @@ const receivePrompt =  async (req, res) => {
           console.log(`${webhookEvent.message.text} by ${senderPsid}`);
         
   //           // indicate to user that the messaged was received with the typing indicator bubble ( . . . )
-            // messageService.callGraphApi("POST", {"recipient": {"id": senderPsid}, "sender_action": "typing_on"});
+            messageService.callGraphApi({"recipient": {"id": `${senderPsid}`}, "sender_action": "typing_on"});
 
             let conversationObject = await messageLogicRouter.routeMessage(senderPsid, webhookEvent.message.text);
             // add new user message to object to be uploaded to last conversation doc
@@ -59,8 +59,7 @@ const receivePrompt =  async (req, res) => {
                       await unitService.addUnit(senderPsid, conversationObject.options[i].value);
                       break;
                     case "setNotification":
-                      //set notification
-                      console.log("SUCCESS notification set every " + conversationObject.options[i].value);
+                      notificationService.setNotification(senderPsid, conversationObject.userMessage);
                       break;
                     case null:
                       break;

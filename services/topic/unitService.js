@@ -2,7 +2,7 @@ const request = require('request-promise');
 const addUnit = async (psid, unitCode) => {
     unitCode = unitCode.toUpperCase();
     try{
-        var options = {
+        let options = {
             'method': 'POST',
             'url': 'https://cloud-db.azurewebsites.net/api/AddUnitForUser?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==',
             'headers': {
