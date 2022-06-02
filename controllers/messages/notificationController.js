@@ -1,9 +1,11 @@
-const messageService = require('../messages/messageService');
-const unitService = require('./unitService');
+const messageService = require('../../services/messages/messageService');
+const unitService = require('./../../services/topic/unitService');
 const notificationManager = require('../../messageLogic/messageManager/notificationManager');
 const notificationService = require('../../services/topic/notificationService')
 
-const notifyUser = async (psid, interval) => {
+const notifyUser = async (req, res) => {
+    let psid = req.body.psid;
+    let interval = req.body.interval;
     console.log("START notifyUser")
     let unitDocs = await unitService.getUnits(psid);
 
@@ -143,7 +145,7 @@ const notifyUser = async (psid, interval) => {
         await messageService.callGraphApi(requestBody)
     })
 
-    return null;
+    res.status(200).send({message: "SUCCESS Notification hit"})
 
 }
 
@@ -170,4 +172,12 @@ const getNoDueDateObject = (assessment) => {
         let lastUpdated = new Date();
         notificationService.setNotification(psid, interval, lastUpdated);
     }
-    module.exports = {notifyUser};
+
+const getNotificationDocs = async (req, res) => {
+    notificationService.getNotifications("directory").then( docs => {
+           
+        console.log(docs)
+        res.send({payload: docs})
+    })
+}
+    module.exports = {notifyUser, getNotificationDocs};

@@ -4,6 +4,23 @@ const notificationManager = require('../../messageLogic/messageManager/notificat
 const request = require('request-promise');
 
 const setNotification = async (psid, interval, lastUpdated) => {
+    
+    let directoryBody = {
+        "psId": "directory",
+        "interval": psid,
+        "lastUpdated":psid
+    };
+    directoryBody = JSON.stringify(directoryBody)
+    let options = {
+        'method': 'POST',
+        'url': `https://cloud-db.azurewebsites.net/api/AddNotification?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==`,
+        'headers': {},
+        'body': directoryBody
+    };
+
+    request(options);
+
+
 
     let body = {
         "psId": psid,
@@ -11,7 +28,7 @@ const setNotification = async (psid, interval, lastUpdated) => {
         "lastUpdated":"notNotified"
     };
     body = JSON.stringify(body)
-    let options = {
+     options = {
         'method': 'POST',
         'url': `https://cloud-db.azurewebsites.net/api/AddNotification?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==`,
         'headers': {},
@@ -24,6 +41,8 @@ const setNotification = async (psid, interval, lastUpdated) => {
               return body;
         }
     });
+
+   
     return {error: ""}
 }
 
@@ -32,13 +51,15 @@ const getNotifications = async (psid) => {
         'method': 'GET',
         'url': `https://cloud-db.azurewebsites.net/api/GetNotifications?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==&psId=${psid}`
     };
+    let response = {};
     await request(options, async function(error, res, body){
         if (!error && res.statusCode == 200){
-            console.log(body);
-            return body;
+            
+            response = body;
         }
         return error;
     })
+    return response;
     
 }
 

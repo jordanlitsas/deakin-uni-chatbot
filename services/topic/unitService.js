@@ -31,7 +31,7 @@ const addUnit = async (psid, unitCode) => {
 
 const getUnits = async (psid) => {
     try{
-        var options = {
+        let options = {
             'method': 'POST',
             'url': `https://cloud-db.azurewebsites.net/api/GetUnitsForUser?code=-yg1kZhCK196DlXHHB0JKY2JuL2bQQGiFa5FR9YF_yaAAzFuguQL9Q==&psId=${psid}`,
             'headers': {

@@ -9,6 +9,8 @@ const
 const webhookRoute = require('./routes/messages/webhookRoute');
 app.use('/webhook', webhookRoute);
 
+const notificationRoute = require('./routes/messages/notificationRoute');
+app.use('/notification', notificationRoute);
 const tmp = require('./controllers/messages/webhookController');
 app.post('/test', (req, res) => {
   tmp.receivePrompt(req, res);
