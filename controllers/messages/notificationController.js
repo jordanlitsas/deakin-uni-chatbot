@@ -5,8 +5,10 @@ const notificationService = require('../../services/topic/notificationService')
 
 const notifyUser = async (req, res) => {
     let psid = req.body.psid;
-    let interval = req.body.interval;
     console.log("START notifyUser")
+    let interval = await notificationService.getNotifications(psid);
+    interval = interval[0];
+    console.log(interval)
     let unitDocs = await unitService.getUnits(psid);
 
     //clean \r\n from string
@@ -145,7 +147,10 @@ const notifyUser = async (req, res) => {
         await messageService.callGraphApi(requestBody)
     })
 
-    res.status(200).send({message: "SUCCESS Notification hit"})
+    //I know what you're thinking. It just works, I don't know why.
+    if (req.body.fromWebook == false){
+        res.status(200).send({message: "SUCCESS Notification hit"})
+    }
 
 }
 
@@ -176,7 +181,7 @@ const getNoDueDateObject = (assessment) => {
 const getNotificationDocs = async (req, res) => {
     notificationService.getNotifications("directory").then( docs => {
            
-        console.log(docs)
+        // docs = JSON.parse(docs)
         res.send({payload: docs})
     })
 }

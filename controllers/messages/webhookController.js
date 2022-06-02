@@ -5,6 +5,7 @@ const unitService = require('../../services/topic/unitService');
 const unitManager = require('../../messageLogic/messageManager/unitManager');
 const request = require('request-promise');
 const notificationService = require('../../services/topic/notificationService');
+const notificationController = require('./notificationController');
 
 const sendMessage = async (requestBody, conversationObject) => {
   messageService.callGraphApi("POST", requestBody);
@@ -23,8 +24,13 @@ const sendMessage = async (requestBody, conversationObject) => {
 
 const receivePrompt =  async (req, res) => {
   let body = req.body;  
+
+  //true if the request must be return from notificationController.notifyUser()
+  let notificationTrigger = false;
+
+
       // Iterates over each entry - there may be multiple if batched
-      body.entry.forEach(async function(entry) {
+      await body.entry.forEach(async function(entry) {
         // Gets the body of the webhook event
         let webhookEvent = entry.messaging[0];     
         // Get the sender PSID
@@ -61,6 +67,10 @@ const receivePrompt =  async (req, res) => {
                     case "setNotification":
                       notificationService.setNotification(senderPsid, conversationObject.userMessage);
                       break;
+                      case "notifyUser":
+                        console.log("! notify user action")
+                        notificationTrigger = true;
+                        break;
                     case null:
                       break;
                   }
@@ -124,9 +134,15 @@ const receivePrompt =  async (req, res) => {
             }
             
       }
-  //     //Facebook requires early 200 code http response
+      console.log(notificationTrigger)
+
+      //Facebook requires early 200 code http response so a dummy req and res is used
+    if (notificationTrigger){
+      notificationController.notifyUser({body: {psid: senderPsid, fromWebhook: true}}, null);
+    } 
+    res.status(200).send()
   });
-  res.status(200).send('EVENT_RECEIVED');
+ 
 }
        
 

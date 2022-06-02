@@ -1,6 +1,8 @@
 const replies = {
-    initiateConversation:  `When would you like me to provide you with a notification about your upcoming assessments? Every 'week', 'fortnight' or 'month'`
+    initiateConversation:  `When would you like me to provide you with a notification about your upcoming assessments? Every 'week', 'fortnight' or 'month'`,
+    comingUp: "One moment, I'll see what's due soon"
 }
+
 const initiateConversation = () => {
     return replies.initiateConversation;
 }
@@ -10,6 +12,13 @@ const getResponse = (newUserMessage, lastUserMessage) => {
             message: `Ok, we will remind you every ${newUserMessage} of your assessments due in that coming ${newUserMessage}.`,
             options: [{action: "setNotification", value: newUserMessage}]
         }
+    }
+
+    if (newUserMessage == "coming up"){
+        return{
+            message: replies.comingUp,
+            options:[{action: "notifyUser", value: null}]
+        };
     }
 }
 
