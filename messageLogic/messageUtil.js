@@ -1,6 +1,8 @@
 const { response } = require('express');
 const unitManager = require('./messageManager/unitManager');
 const notificationManager = require('./messageManager/notificationManager');
+
+
 const sanitiseMessage = (message) => {
     let sanitisedMessage = message.toLowerCase();
     sanitisedMessage = sanitisedMessage.trim();
@@ -42,11 +44,16 @@ const isKeyword = (message) => {
         case 'notifications':
             responseText = notificationManager.initiateConversation();
             conversationResponse = {topic: 'notifications', botMessage: responseText}
-            
+            return conversationResponse;
+        
+        case "coming up":
+            responseText = notificationManager.getResponse();
+            conversationResponse = {topic: 'notifications', botMessage: responseText}
         default: 
             return null;
     }    
 }
+
 
 
 

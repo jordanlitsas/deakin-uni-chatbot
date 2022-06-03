@@ -7,7 +7,12 @@ const callGraphApi = async (requestBody) => {
       "json": requestBody
     });
 
-    console.log(`Message sent: ${requestBody.message.text}`)
+
+    // ( ... ) message typing indicator doesn't contain text 
+    try{
+      console.log(`Message sent: ${requestBody.message.text}`)
+    }
+    catch(e){}
   }
 
 

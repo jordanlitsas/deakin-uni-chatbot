@@ -4,7 +4,8 @@ const messageService = require('../../services/messages/messageService');
 const unitService = require('../../services/topic/unitService');
 const unitManager = require('../../messageLogic/messageManager/unitManager');
 const request = require('request-promise');
-
+const notificationService = require('../../services/topic/notificationService');
+const notificationController = require('./notificationController');
 
 const sendMessage = async (requestBody, conversationObject) => {
   messageService.callGraphApi("POST", requestBody);
@@ -23,8 +24,13 @@ const sendMessage = async (requestBody, conversationObject) => {
 
 const receivePrompt =  async (req, res) => {
   let body = req.body;  
+
+  //true if the request must be return from notificationController.notifyUser()
+  let notificationTrigger = false;
+
+
       // Iterates over each entry - there may be multiple if batched
-      body.entry.forEach(async function(entry) {
+      await body.entry.forEach(async function(entry) {
         // Gets the body of the webhook event
         let webhookEvent = entry.messaging[0];     
         // Get the sender PSID
@@ -35,16 +41,14 @@ const receivePrompt =  async (req, res) => {
           console.log(`${webhookEvent.message.text} by ${senderPsid}`);
         
   //           // indicate to user that the messaged was received with the typing indicator bubble ( . . . )
-            // messageService.callGraphApi("POST", {"recipient": {"id": senderPsid}, "sender_action": "typing_on"});
+            messageService.callGraphApi({"recipient": {"id": `${senderPsid}`}, "sender_action": "typing_on"});
 
             let conversationObject = await messageLogicRouter.routeMessage(senderPsid, webhookEvent.message.text);
-            
             // add new user message to object to be uploaded to last conversation doc
             conversationObject['userMessage'] = webhookEvent.message.text;
 
 
             if (typeof(conversationObject) != 'undefined'){
-              console.log(conversationObject)
 
               if (Array.isArray(conversationObject.options)){                
                 for (let i = 0; i < conversationObject.options.length; i++){
@@ -60,6 +64,13 @@ const receivePrompt =  async (req, res) => {
                     case "addUnit":
                       await unitService.addUnit(senderPsid, conversationObject.options[i].value);
                       break;
+                    case "setNotification":
+                      notificationService.setNotification(senderPsid, conversationObject.userMessage);
+                      break;
+                      case "notifyUser":
+                        console.log("! notify user action")
+                        notificationTrigger = true;
+                        break;
                     case null:
                       break;
                   }
@@ -79,12 +90,13 @@ const receivePrompt =  async (req, res) => {
                   };
                   await messageService.callGraphApi(requestBody);
                 }
-                lastConversationService.updateLastConversation({
-                    psId: senderPsid,
-                    topic: conversationObject.topic,
-                    userMessage: conversationObject.userMessage,
-                    botMessage: conversationObject.botMessage 
-                  });
+                let conversation = {
+                  psId: senderPsid,
+                  topic: conversationObject.topic,
+                  userMessage: conversationObject.userMessage,
+                  botMessage: conversationObject.botMessage
+                };
+                lastConversationService.updateLastConversation(conversation);
               }
 
 
@@ -100,12 +112,13 @@ const receivePrompt =  async (req, res) => {
                   "message": {"text": conversationObject.botMessage}
                 };
                 await messageService.callGraphApi(requestBody);
-                lastConversationService.updateLastConversation({
+                let conversation = {
                   psId: senderPsid,
                   topic: conversationObject.topic,
                   userMessage: conversationObject.userMessage,
                   botMessage: conversationObject.botMessage
-                });
+                };
+                lastConversationService.updateLastConversation(conversation);
               } 
           }
             
@@ -121,9 +134,15 @@ const receivePrompt =  async (req, res) => {
             }
             
       }
-  //     //Facebook requires early 200 code http response
+      console.log(notificationTrigger)
+
+      //Facebook requires early 200 code http response so a dummy req and res is used
+    if (notificationTrigger){
+      notificationController.notifyUser({body: {psid: senderPsid, fromWebhook: true}}, null);
+    } 
+    res.status(200).send()
   });
-  res.status(200).send('EVENT_RECEIVED');
+ 
 }
        
 
