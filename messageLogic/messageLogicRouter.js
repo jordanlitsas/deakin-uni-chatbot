@@ -25,6 +25,10 @@ const routeMessage = async (senderPsid, messageText) => {
         case "notifications":   
             response = notificationManager.getResponse(message, doc.conversation);
             return {topic: "notifications", botMessage: response.message, options: response.options};
+
+        case "instantupdate":   
+            response = instantUpdateManager.getResponse(message, doc.conversation);
+            return {topic: "instantupdate", botMessage: response.message, options: response.options};
     }  
     
 }
