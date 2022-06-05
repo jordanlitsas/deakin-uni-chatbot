@@ -45,6 +45,11 @@ const isKeyword = (message) => {
             responseText = notificationManager.initiateConversation();
             conversationResponse = {topic: 'notifications', botMessage: responseText}
             return conversationResponse;
+
+        case 'instantupdate':
+            responseText = instantUpdateManager.initiateConversation();
+            conversationResponse = {topic: 'instantupdate', botMessage: responseText}
+            return conversationResponse;
         
         case "coming up":
             responseText = notificationManager.getResponse();
