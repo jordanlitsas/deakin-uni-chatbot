@@ -29,6 +29,9 @@ const routeMessage = async (senderPsid, messageText) => {
         case "instantupdate":   
             response = instantUpdateManager.getResponse(message, doc.conversation);
             return {topic: "instantupdate", botMessage: response.message, options: response.options};
+        case "calculateGrade":   
+            response = gradeCalcManager.getResponse(message, doc.conversation);
+            return {topic: "calculateGrade", botMessage: response.message, options: response.options};
     }  
     
 }
