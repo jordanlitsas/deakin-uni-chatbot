@@ -42,7 +42,7 @@ const getResponse = (newUserMessage, lastUserMessage) => {
             value = lastUserMessage;
         }
         return {
-            message:`You have sent me ${newUserMessage}.` + replies.confirmAddedUnit, 
+            message:`You have sent me ${newUserMessage}. ` + replies.confirmAddedUnit, 
             options: [{action: action, value: value}]};
     }
 

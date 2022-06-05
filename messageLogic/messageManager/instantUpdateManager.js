@@ -1,7 +1,5 @@
 const replies = {
-    initiateConversation:  `I will happily update you on a unit. Can you please let me know the unit code and i'll get right on it!`,
-    unitCodeResponse: `Thank-you! Your tasks this month include: ${instantUpdate}`,
-    
+    initiateConversation:  `I will happily update you on a unit. Can you please let me know the unit code and i'll get right on it!`    
 }
 
 const getResponse = (newUserMessage, lastUserMessage) => {

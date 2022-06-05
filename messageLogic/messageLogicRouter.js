@@ -2,6 +2,8 @@ const messageUtil = require('./messageUtil');
 const lastConversationService = require('../services/messages/lastConversationService')
 const unitManager = require("./messageManager/unitManager");
 const notificationManager = require('./messageManager/notificationManager')
+const instantUpdateManager = require('./messageManager/instantUpdateManager')
+const gradeCalcManager = require ('./messageManager/gradeCalcManager')
 
 const routeMessage = async (senderPsid, messageText) => {
     let message = messageUtil.sanitiseMessage(messageText);

@@ -68,7 +68,6 @@ const receivePrompt =  async (req, res) => {
                       notificationService.setNotification(senderPsid, conversationObject.userMessage);
                       break;
                       case "notifyUser":
-                        console.log("! notify user action")
                         notificationTrigger = true;
                         break;
                     case null:
