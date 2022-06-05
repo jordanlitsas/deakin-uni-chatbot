@@ -1,6 +1,7 @@
 const { response } = require('express');
 const unitManager = require('./messageManager/unitManager');
 const notificationManager = require('./messageManager/notificationManager');
+const instantUpdateManager = require('./messageManager/instantUpdateManager')
 
 
 const sanitiseMessage = (message) => {
@@ -45,10 +46,16 @@ const isKeyword = (message) => {
             responseText = notificationManager.initiateConversation();
             conversationResponse = {topic: 'notifications', botMessage: responseText}
             return conversationResponse;
+
+        case 'instantupdate':
+            responseText = instantUpdateManager.initiateConversation();
+            conversationResponse = {topic: 'instantupdate', botMessage: responseText}
+            return conversationResponse;
         
         case "coming up":
             responseText = notificationManager.getResponse();
             conversationResponse = {topic: 'notifications', botMessage: responseText}
+            return conversationResponse;
         default: 
             return null;
     }    

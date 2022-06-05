@@ -162,10 +162,6 @@ const notifyUser = async (req, res) => {
     })
 
 
-    console.log("from webhook")
-    console.log(req.body.fromWebook)
-    console.log('\n')
-
     //I know what you're thinking. It just works, I don't know why.
     if (typeof(req.body.fromWebook) == 'undefined'){
         res.status(200).send({message: "SUCCESS Notification hit"})
