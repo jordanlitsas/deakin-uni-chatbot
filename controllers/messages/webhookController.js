@@ -37,7 +37,7 @@ const receivePrompt =  async (req, res) => {
         let senderPsid = webhookEvent.sender.id;
         // Check if the event is a message or postback and
         // pass the event to the appropriate handler function
-        if (webhookEvent.message) {
+        if (webhookEvent.message.text) {
           console.log(`${webhookEvent.message.text} by ${senderPsid}`);
         
   //           // indicate to user that the messaged was received with the typing indicator bubble ( . . . )

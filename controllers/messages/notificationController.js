@@ -6,10 +6,21 @@ const notificationService = require('../../services/topic/notificationService')
 const notifyUser = async (req, res) => {
     let psid = req.body.psid;
     console.log("START notifyUser")
+    console.log('\nreqbody')
+    console.log(req.body)
     let interval = await notificationService.getNotifications(psid);
     interval = interval[0];
-    console.log(interval)
     let unitDocs = await unitService.getUnits(psid);
+
+   
+
+
+
+    console.log('\nInterval')
+    console.log(interval)
+    console.log('\npsid')
+    console.log(psid)
+
 
     //clean \r\n from string
     unitDocs = unitDocs.replace(/(\r\n|\n|\r)/gm, "");
@@ -136,8 +147,11 @@ const notifyUser = async (req, res) => {
         })
     })
     // Plug assessment cards into message builder
+    console.log(messages);
 
     messages.forEach(async message => {
+        console.log(message);
+        console.log('\n')
         let requestBody = {
             "recipient": {
               "id": psid
@@ -147,8 +161,13 @@ const notifyUser = async (req, res) => {
         await messageService.callGraphApi(requestBody)
     })
 
+
+    console.log("from webhook")
+    console.log(req.body.fromWebook)
+    console.log('\n')
+
     //I know what you're thinking. It just works, I don't know why.
-    if (req.body.fromWebook == false){
+    if (typeof(req.body.fromWebook) == 'undefined'){
         res.status(200).send({message: "SUCCESS Notification hit"})
     }
 
@@ -180,9 +199,11 @@ const getNoDueDateObject = (assessment) => {
 
 const getNotificationDocs = async (req, res) => {
     notificationService.getNotifications("directory").then( docs => {
-           
-        // docs = JSON.parse(docs)
-        res.send({payload: docs})
+        let psids = [];
+        for (let i = 0; i < docs.length; i++){
+            psids.push(docs[i].interval);
+        }
+        res.send({psids: psids});
     })
 }
     module.exports = {notifyUser, getNotificationDocs};
