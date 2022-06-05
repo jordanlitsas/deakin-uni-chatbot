@@ -138,7 +138,7 @@ const receivePrompt =  async (req, res) => {
 
       //Facebook requires early 200 code http response so a dummy req and res is used
     if (notificationTrigger){
-      notificationController.notifyUser({body: {psid: senderPsid, fromWebhook: true}}, null);
+      notificationController.notifyUser({body: {psid: senderPsid}}, null);
     } 
     res.status(200).send()
   });
