@@ -16,7 +16,6 @@ const setNotification = async (psid, interval, lastUpdated) => {
         body.interval = interval;
         body = {payload: body};
         
-        console.log(body)
         body = JSON.stringify(body)
          options = {
             'method': 'POST',
