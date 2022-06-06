@@ -38,7 +38,7 @@ const isInterval = (string) => {
 
 
 const buildAssessmentNotificationMessage = (assessment) => {
-    let response = `${assessment.name} - ${assessment.weight} \r\n${assessment.output}\r\nDue: ${assessment.due}`;
+    let response = `${assessment.name} - ${assessment.weight} \r\n${assessment.output} - Due: ${assessment.due}`;
     return response;
 }
 

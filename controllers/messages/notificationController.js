@@ -140,11 +140,15 @@ const notifyUser = async (req, res) => {
     let messages = [];
     
     responseObj.units.forEach(unit => {
-        messages.push(unit.unitName)
+        // messages.push(unit.unitName)
+        let message = "";
+        message += unit.unitName+"\r\n\r\n"
+        console.log('\r\n\r\nassessments')
         unit.assessments.forEach(assessment => {
-            let message = notificationManager.buildAssessmentNotificationMessage(assessment);
-            messages.push(message);
+            console.log(assessment)
+            message += notificationManager.buildAssessmentNotificationMessage(assessment)+"\r\n";
         })
+        messages.push(message);
     })
     // Plug assessment cards into message builder
     console.log(messages);
@@ -163,7 +167,7 @@ const notifyUser = async (req, res) => {
 
 
     //I know what you're thinking. It just works, I don't know why.
-    if (typeof(req.body.fromWebook) == 'undefined'){
+    if (res != null){
         res.status(200).send({message: "SUCCESS Notification hit"})
     }
 
